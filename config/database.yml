@@ -5,8 +5,7 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
   host: <%= ENV.fetch("POSTGRES_HOST") { "localhost" } %>
-  user: <%= ENV.fetch("POSTGRES_USER") { "cezar" } %>
-  password: <%= ENV.fetch("POSTGRES_PASSWORD") { "" } %>
+
 
 development:
   primary:

@@ -62,14 +62,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_15_063325) do
   end
 
   create_table "chats", force: :cascade do |t|
-    t.integer "agent_id", null: false
+    t.bigint "agent_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["agent_id"], name: "index_chats_on_agent_id"
   end
 
   create_table "chunks", force: :cascade do |t|
-    t.integer "resource_id", null: false
+    t.bigint "resource_id", null: false
     t.text "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -79,7 +79,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_15_063325) do
   end
 
   create_table "messages", force: :cascade do |t|
-    t.integer "submission_id", null: false
+    t.bigint "submission_id", null: false
     t.string "role"
     t.text "body"
     t.datetime "created_at", null: false
@@ -96,7 +96,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_15_063325) do
   create_table "submissions", force: :cascade do |t|
     t.text "input"
     t.text "context"
-    t.integer "chat_id", null: false
+    t.bigint "chat_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["chat_id"], name: "index_submissions_on_chat_id"

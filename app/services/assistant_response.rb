@@ -29,7 +29,7 @@ class AssistantResponse < Base
   private
 
     def instructions
-      prompt = Langchain::Prompt::PromptTemplate.new(template: @agent.system_prompt, input_variables: [ "now", "timezone" ])
+      prompt = Langchain::Prompt::PromptTemplate.new(template: "Timezone: {timezone} {now}", input_variables: [ "now", "timezone" ])
       prompt.format(now: Time.current, timezone: Time.zone.name)
     end
 
