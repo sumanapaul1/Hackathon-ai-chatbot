@@ -98,18 +98,46 @@ class Chat < ApplicationRecord
     name_patterns = [
       /(?:my name is|i'm|i am|this is|call me)\s+([a-zA-Z\s]+?)(?:\s|$|[.,!?])/i,
       /(?:name)\s*[:=]\s*([a-zA-Z\s]+?)(?:\s|$|[.,!?])/i,
-      /(?:i'm|i am)\s+([a-zA-Z\s]+?)(?:\s|$|[.,!?])/i
+      /(?:i'm|i am)\s+([a-zA-Z\s]+?)(?:\s|$|[.,!?])/i,
+      # More flexible patterns to catch names at start of messages
+      /^([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s*[.,!]?\s*(?:here|calling|interested)/i,
+      # Pattern for "Hi, I'm Name" or "Hello, Name here"  
+      /(?:hi|hello),?\s*(?:i'm\s+|this is\s+)?([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/i,
+      # Pattern for email signatures or form-like responses
+      /(?:regards|sincerely|thanks),?\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/i
     ]
+    
     name = nil
     name_patterns.each do |pattern|
       match = user_messages_text.match(pattern)
       if match
         candidate_name = match[1].strip.titleize
-        # Exclude common AI assistant names and generic terms
-        unless ['Tina', 'Assistant', 'Bot', 'Hello', 'Hi', 'Thanks', 'Thank'].include?(candidate_name)
+        # More comprehensive exclusion list and validation
+        excluded_words = ['Tina', 'Assistant', 'Bot', 'Hello', 'Hi', 'Thanks', 'Thank', 'Here', 'Calling', 'Interested', 
+                         'Tour', 'Apartment', 'Visit', 'Schedule', 'Available', 'Yes', 'No', 'Ok', 'Okay', 'Sure']
+        
+        # Check if it looks like a real name (2-30 chars, not all caps, not excluded)
+        if candidate_name.length >= 2 && candidate_name.length <= 30 && 
+           candidate_name != candidate_name.upcase && 
+           !excluded_words.include?(candidate_name) &&
+           candidate_name.match?(/^[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*$/)
           name = candidate_name
           break
         end
+      end
+    end
+    
+    # If no name found yet, try to extract from email address as last resort
+    if name.nil? && email
+      email_name = email.split('@').first
+      # Convert email username to potential name (e.g., "john.doe" -> "John Doe")
+      if email_name.include?('.')
+        potential_name = email_name.split('.').map(&:capitalize).join(' ')
+        if potential_name.length >= 4 && potential_name.length <= 30
+          name = potential_name
+        end
+      elsif email_name.match?(/^[a-z]+$/i) && email_name.length >= 3
+        name = email_name.capitalize
       end
     end
     
