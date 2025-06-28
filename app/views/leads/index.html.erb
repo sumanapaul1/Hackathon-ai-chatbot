@@ -1,0 +1,78 @@
+<div class="lead-table-wrapper mt-5">
+  <h2 class="mb-3">✨ Lead Dashboard</h2>
+  <table class="styled-leads-table">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Message</th>
+        <th>Preferred Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @leads.each_with_index do |lead, index| %>
+        <% payload = JSON.parse(lead.payload || '{}') rescue {} %>
+        <tr>
+          <td><%= index + 1 %></td>
+          <td><%= payload["name"].presence || "-" %></td>
+          <td><%= lead.email.presence || "-" %></td>
+          <td><%= payload["phone"].presence || "-" %></td>
+          <td><%= payload["message"].presence || "-" %></td>
+          <td><%= payload["preferred_date"].presence || "-" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  
+</div>
+
+<% if @leads.empty? %>
+  <p class="text-gray-500">No leads found.</p>
+<% end %>
+
+
+<style>
+    .styled-leads-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px #e2e8f0;
+
+    thead {
+        background-color: #2f3e46;
+        color: #fff;
+
+        th {
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        }
+    }
+
+    tbody {
+        tr {
+        background-color: #ffffff;
+
+        &:nth-child(odd) {
+            background-color: #f7f9fc;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+        }
+    }
+    }
+
+    .lead-table-wrapper {
+    padding: 1rem;
+    background-color: #f8fafc;
+    border-radius: 12px;
+    }
+</style>
