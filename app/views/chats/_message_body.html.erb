@@ -1,5 +1,7 @@
-<% if message.body.present?%>
-  <%= markdown(message.body) %>
+<% if message.content.present? %>
+  <div class="message <%= message.agent? ? 'bot' : 'user' %>">
+    <%= markdown(message.content) %>
+  </div>
 <% else %>
   <span class="typing-loader"></span>
 <% end %>

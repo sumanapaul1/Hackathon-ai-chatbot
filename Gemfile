@@ -56,6 +56,8 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+  gem "pry"
+  gem "pry-rails"
 end
 
 gem "langchainrb"
@@ -64,3 +66,7 @@ gem "ruby-openai", "~> 8.1"
 gem "redcarpet"
 gem "neighbor"
 gem "retryable"
+
+# Google Calendar API for appointment scheduling
+gem "google-apis-calendar_v3"
+gem "googleauth"

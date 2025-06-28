@@ -9,16 +9,12 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  # Defines the root path route ("/")
-  # root "chats#index"
   root "leads#index"
   resources :leads, only: [:index, :new, :create, :show]
-  resources :agents do
-    resources :chats, only: [ :create ]
+  resources :chats, only: [:index, :show, :create] do
+    member do
+      patch :close
+    end
+    resources :messages, only: [:create]
   end
-  resources :chats, only: [ :index, :show ] do
-    resources :submissions, only: [ :create ]
-  end
-  resources :resources, only: [ :create, :destroy ]
 end
-

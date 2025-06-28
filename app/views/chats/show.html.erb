@@ -1,74 +1,63 @@
-<div class="chat-container">
+<%= turbo_stream_from @chat.stream_id %>
+
+<div class="chat-container" id="chat-container">
   <div class="chat-header">
-    Apartment Assistant
+    <div class="flex justify-between items-center">
+      <span>Welcome, STONE CREEK APARTMENTS and HOMES!</span>
+      <% if @chat.open? %>
+        <%= button_to close_chat_path(@chat), 
+            method: :patch, 
+            class: "bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition duration-200 flex items-center border-0",
+            data: { 
+              confirm: "Are you sure you want to close this chat? You won't be able to reopen it.",
+              turbo_method: :patch
+            },
+            form: { class: "inline-block" } do %>
+          <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          Close Chat
+        <% end %>
+      <% else %>
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          Chat Closed
+        </span>
+      <% end %>
+    </div>
   </div>
-  <div class="chat-body" id="chat-body">
+  
+  <!-- Show completion message for closed chats -->
+  <% if @chat.closed? %>
+    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <div class="ml-3">
+          <p class="text-sm text-blue-700">
+            <strong>Conversation Completed!</strong> Thank you for your interest in STONE Creek Apartment and Homes. Our team will be in touch if you provided contact information.
+          </p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  
+  <div class="chat-body" id="<%= @chat.messages_id %>" data-controller="scroll" data-scroll-container-id-value="<%= @chat.messages_id %>">
     <% @chat.messages.each do |message| %>
       <%= render partial: "chats/message", locals: { message: message } %>
     <% end %>
   </div>
-  <div class="chat-footer">
+  
+  <div class="chat-footer" id="chat_form">
+    <% if @chat.open? %>
       <%= render partial: "chats/form", locals: { chat: @chat } %>
+    <% else %>
+      <%= render partial: "chats/form_disabled", locals: { chat: @chat } %>
+    <% end %>
   </div>
 </div>
-<script>
-  $(document).ready(function() {
-      debugger;
-      const chatBody = $('#chat-body');
-      const messageInput = $('#message-input');
-      const sendButton = $('#send-button');
-
-      function scrollToBottom() {
-      chatBody.scrollTop(chatBody[0].scrollHeight);
-      }
-      scrollToBottom();
-
-      function sendMessage() {
-      const content = messageInput.val().trim();
-      if (!content) return;
-
-      chatBody.append(`
-        <div class="message user">${content}</div>
-      `);
-      scrollToBottom();
-      messageInput.val('');
-
-      chatBody.append('<div class="typing-indicator" id="typing">Assistant is typing...</div>');
-      scrollToBottom();
-
-      $.ajax({
-        url:$('#chat_form').attr('action'),
-        method: 'POST',
-        data:{ submission: { input: content } }, 
-        headers: {
-        'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function(response) {
-        $('#typing').remove();
-        console.log(response.messages)
-        let html = ''
-        response.messages.forEach(msg => {
-            if(msg.role === 'bot') {
-            html = `<div class="message bot"><div class="bot-avatar">AI</div><div>${msg.content.replace(/\n/g, '<br>')}</div></div>`
-            }
-            chatBody.append(html);
-        });
-        scrollToBottom();
-        },
-        error: function() {
-          $('#typing').remove();
-          chatBody.append('<div class="message bot"><div class="bot-avatar">AI</div><div>Sorry, something went wrong. Try again!</div></div>');
-          scrollToBottom();
-        }
-      });
-      }
-      sendButton.click(sendMessage);
-      messageInput.keypress(function(e) {
-      if (e.which === 13) {
-        e.preventDefault();
-        sendMessage();
-      }
-      });
-  });
-</script>
- 

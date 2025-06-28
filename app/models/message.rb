@@ -2,22 +2,24 @@
 #
 # Table name: messages
 #
-#  id            :integer          not null, primary key
-#  submission_id :integer          not null
-#  role          :string
-#  body          :text
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
+#  id         :integer          not null, primary key
+#  chat_id    :integer          not null
+#  sender     :string
+#  content    :text
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
 #
 # Indexes
 #
-#  index_messages_on_submission_id  (submission_id)
+#  index_messages_on_chat_id  (chat_id)
 #
 
 class Message < ApplicationRecord
-  belongs_to :submission
+  belongs_to :chat
+
+  validates :content, presence: true
 
   def agent?
-    role == "assistant"
+    sender != "user"
   end
 end

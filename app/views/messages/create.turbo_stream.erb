@@ -1,0 +1,56 @@
+<%= turbo_stream.append @chat.messages_id do %>
+    <%= render partial: "chats/message", locals: { message: @message } %>
+<% end %>
+
+<% if @assistant_message %>
+  <%= turbo_stream.append @chat.messages_id do %>
+    <%= render partial: "chats/message", locals: { message: @assistant_message } %>
+  <% end %>
+<% end %>
+
+<!-- Handle auto-closed chat -->
+<% if @chat.closed? %>
+  <%= turbo_stream.replace "chat-container" do %>
+    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8 text-center">
+      <div class="mb-6">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+          <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">Conversation Completed!</h2>
+        <p class="text-gray-600 mb-6">This chat has been automatically closed as your conversation has reached a natural conclusion.</p>
+      </div>
+      
+      <div class="space-y-4">
+        <%= link_to "View All Chats", chats_path, class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200" %>
+        <%= button_to "Start New Chat", chats_path, method: :post, class: "bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 border-0", form: { class: "inline-block ml-4" } %>
+      </div>
+      
+      <div class="mt-6 text-sm text-gray-500">
+        Thank you for your interest in STONE Creek Apartment and Homes!
+      </div>
+    </div>
+  <% end %>
+  
+  <!-- Auto-redirect after 5 seconds -->
+  <script>
+    setTimeout(function() {
+      window.location.href = '<%= chats_path %>';
+    }, 5000);
+  </script>
+<% else %>
+  <!-- Only update the form if chat is still open -->
+  <%= turbo_stream.replace "chat_form" do %>
+    <%= render partial: "chats/form", locals: { chat: @chat } %>
+  <% end %>
+
+  <script>
+    console.log('Turbo Stream executed for chat messages');
+    // Auto-scroll to bottom
+    const chatBody = document.getElementById('<%= @chat.messages_id %>');
+    if (chatBody) {
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+  </script>
+<% end %>

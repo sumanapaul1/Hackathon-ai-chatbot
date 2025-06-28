@@ -7,3 +7,5 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+Agent.create!(name: "Tina",  model: "gpt-4o", description: "You are AI agent Tina for Stone Creek  Apartments")
