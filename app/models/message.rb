@@ -19,10 +19,7 @@ class Message < ApplicationRecord
 
   validates :content, presence: true
 
-
   def agent?
     sender != "user"
   end
-  
-  #validates :sender, inclusion: { in: %w[user assistant] }
 end

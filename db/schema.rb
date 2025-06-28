@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_15_063229) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_28_055339) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -56,7 +56,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_15_063229) do
     t.bigint "agent_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "status", default: "open", null: false
     t.index ["agent_id"], name: "index_chats_on_agent_id"
+  end
+
+  create_table "leads", force: :cascade do |t|
+    t.jsonb "payload"
+    t.string "email"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "chat_id", null: false
+    t.index ["chat_id"], name: "index_leads_on_chat_id"
   end
 
   create_table "messages", force: :cascade do |t|
@@ -71,5 +81,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_15_063229) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "chats", "agents"
+  add_foreign_key "leads", "chats"
   add_foreign_key "messages", "chats"
 end

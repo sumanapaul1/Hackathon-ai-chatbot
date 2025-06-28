@@ -1,5 +1,12 @@
-<%= form_with model: [chat, Message.new], id: "chat_form", class: "flex items-center justify-center w-full space-x-2", data: { controller: "form-submit", action: "turbo:submit-end->form-submit#afterSubmit" } do |form| %>
-      <%= form.text_area :content, data: { action: "keydown->form-submit#submitOnEnter", form_submit_target: "input" }, class: "flex h-10 w-full rounded-md border border-[#e5e7eb] px-3 py-2 text-sm placeholder-[#6b7280] focus:outline-none focus:ring-2 focus:ring-[#9ca3af] disabled:cursor-not-allowed disabled:opacity-50 text-[#030712] focus-visible:ring-offset-2", placeholder: "Type your message" %>
-    <%= form.hidden_field :sender, value: "user" %>
-     <%= form.submit "Send", class: "inline-flex items-center justify-center rounded-md text-sm font-medium text-[#f9fafb] disabled:pointer-events-none disabled:opacity-50 bg-black hover:bg-[#111827E6] h-10 px-4 py-2" %>
+<%= form_with model: [chat, Message.new], id: "chat_form", class: "flex items-center justify-between w-full space-x-3 p-3", data: { controller: "form-submit", action: "turbo:submit-end->form-submit#afterSubmit" } do |form| %>
+  <div class="flex-1">
+    <%= form.text_area :content, 
+        data: { action: "keydown->form-submit#submitOnEnter", form_submit_target: "input" }, 
+        class: "w-full h-12 resize-none rounded-lg border border-gray-300 px-4 py-3 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent", 
+        placeholder: "Type your message...",
+        rows: 1 %>
+  </div>
+  <%= form.hidden_field :sender, value: "user" %>
+  <%= form.submit "Send", 
+      class: "flex-shrink-0 inline-flex items-center justify-center rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 h-12 px-6 py-2" %>
 <% end %>

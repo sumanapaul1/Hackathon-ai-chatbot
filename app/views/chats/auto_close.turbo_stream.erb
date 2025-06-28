@@ -1,0 +1,66 @@
+<!-- Update the header to show closed state -->
+<%= turbo_stream.replace "chat-container" do %>
+  <div class="chat-container" id="chat-container">
+    <div class="chat-header">
+      <div class="flex justify-between items-center">
+        <span>Welcome, STONE CREEK APARTMENTS and HOMES!</span>
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          Chat Closed
+        </span>
+      </div>
+    </div>
+    
+    <!-- Show completion message -->
+    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <div class="ml-3">
+          <p class="text-sm text-blue-700">
+            <strong>Conversation Completed!</strong> Thank you for your interest in STONE Creek Apartment and Homes. Our team will be in touch if you provided contact information.
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="chat-body" id="<%= @chat.messages_id %>" data-controller="scroll" data-scroll-container-id-value="<%= @chat.messages_id %>">
+      <% @chat.messages.each do |message| %>
+        <%= render partial: "chats/message", locals: { message: message } %>
+      <% end %>
+    </div>
+    
+    <div class="chat-footer" id="chat_form">
+      <%= render partial: "chats/form_disabled", locals: { chat: @chat } %>
+    </div>
+  </div>
+<% end %>
+
+<!-- Show subtle success notification -->
+<%= turbo_stream.prepend "body" do %>
+  <div class="fixed top-4 right-4 z-50 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg" id="flash-notice">
+    <div class="flex items-center">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+      </svg>
+      Conversation completed automatically.
+    </div>
+  </div>
+<% end %>
+
+<!-- Auto-hide flash message -->
+<script>
+  setTimeout(function() {
+    const flashNotice = document.getElementById('flash-notice');
+    if (flashNotice) {
+      flashNotice.style.transition = 'opacity 0.5s ease-out';
+      flashNotice.style.opacity = '0';
+      setTimeout(() => flashNotice.remove(), 500);
+    }
+  }, 4000);
+</script> 

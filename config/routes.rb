@@ -12,6 +12,9 @@ Rails.application.routes.draw do
   root "leads#index"
   resources :leads, only: [:index, :new, :create, :show]
   resources :chats, only: [:index, :show, :create] do
+    member do
+      patch :close
+    end
     resources :messages, only: [:create]
   end
 end

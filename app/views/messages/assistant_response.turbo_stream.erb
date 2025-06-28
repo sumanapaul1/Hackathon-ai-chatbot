@@ -1,0 +1,17 @@
+<%= turbo_stream.remove "typing-indicator" %>
+
+<% if @assistant_message %>
+  <%= turbo_stream.append @chat.messages_id do %>
+    <%= render partial: "chats/message", locals: { message: @assistant_message } %>
+  <% end %>
+<% end %>
+
+<script>
+  console.log('Assistant response received');
+  
+  // Auto-scroll to bottom
+  const chatBody = document.getElementById('<%= @chat.messages_id %>');
+  if (chatBody) {
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }
+</script> 
