@@ -64,6 +64,40 @@ class Lead < ApplicationRecord
     payload['chat_duration']&.to_f || 0
   end
   
+  # Conversation summary methods
+  def conversation_summary_text
+    if is_voice_call?
+      # For voice calls, conversation_summary is a string
+      payload['conversation_summary']
+    else
+      # For chat leads, it might be in conversation_summary.summary
+      payload.dig('conversation_summary', 'summary') || payload['conversation_summary']
+    end
+  end
+  
+  def has_conversation_summary?
+    conversation_summary_text.present?
+  end
+  
+  def conversation_summary_preview(limit = 150)
+    return nil unless has_conversation_summary?
+    text = conversation_summary_text
+    text.length > limit ? "#{text[0...limit]}..." : text
+  end
+  
+  def voice_call_details
+    return {} unless is_voice_call?
+    
+    {
+      transcription_sid: payload['transcription_sid'],
+      conversation_summary: conversation_summary_text,
+      customer_messages_count: payload['customer_messages_count'] || 0,
+      ai_messages_count: payload['ai_messages_count'] || 0,
+      call_confidence: payload['call_confidence'],
+      call_duration: payload['call_duration']
+    }
+  end
+  
   # Source detection methods
   def source
     payload['source'] || 'chat'
