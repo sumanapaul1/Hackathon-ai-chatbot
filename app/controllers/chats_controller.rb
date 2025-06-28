@@ -1,17 +1,15 @@
 class ChatsController < ApplicationController
   def index
-    @agents = Agent.all
-    @resources = Resource.all
-    @appointments = Appointment.all
-  end
-
-  def create
-    @agent = Agent.find(params[:agent_id])
-    @chat = @agent.chats.create!
-    redirect_to chat_path(@chat)
+    @chats = Chat.all
   end
 
   def show
     @chat = Chat.find(params[:id])
+    @message = Message.new
+  end
+
+  def create
+    @chat = Chat.create(agent_id: Agent.last.id)
+    redirect_to @chat
   end
 end

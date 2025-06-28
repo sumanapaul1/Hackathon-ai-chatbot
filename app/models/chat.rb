@@ -14,8 +14,7 @@
 
 class Chat < ApplicationRecord
   belongs_to :agent
-  has_many :submissions, dependent: :destroy
-  has_many :messages, through: :submissions
+  has_many :messages
 
   def stream_id
     "chat_#{id}"

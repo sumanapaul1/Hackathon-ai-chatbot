@@ -1,0 +1,22 @@
+<%= turbo_stream.append @chat.messages_id do %>
+    <%= render partial: "chats/message", locals: { message: @message } %>
+<% end %>
+
+<% if @assistant_message %>
+  <%= turbo_stream.append @chat.messages_id do %>
+    <%= render partial: "chats/message", locals: { message: @assistant_message } %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace "chat_form" do %>
+  <%= render partial: "chats/form", locals: { chat: @chat } %>
+<% end %>
+
+<script>
+  console.log('Turbo Stream executed for chat messages');
+  // Auto-scroll to bottom
+  const chatBody = document.getElementById('<%= @chat.messages_id %>');
+  if (chatBody) {
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }
+</script>
